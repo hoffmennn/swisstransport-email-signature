@@ -24,7 +24,12 @@
      --------------------------------------------------------- */
   const CONFIG = {
     logoUrl: "https://raw.githubusercontent.com/hoffmennn/swisstransport-email-signature/refs/heads/main/assets/logo-horizontal.png",
-    logoWidth: 108,
+    // Nastavuje sa len výška loga. Šírka sa dopočítava automaticky
+    // podľa skutočného pomeru strán stiahnutého obrázka (viď
+    // loadLogoAspectRatio nižšie) – logo tak nie je nikdy umelo
+    // naťahované/stlačené, nech je zdrojový súbor akokoľvek veľký.
+    logoHeight: 40,
+    logoAspectRatio: null, // width / height; doplní sa asynchrónne
     colors: {
       navy: "#0f2438",
       red: "#e2231a",
@@ -99,11 +104,18 @@
     const telefon = escapeHtml(data.telefon || "+421 900 000 000");
     const email = escapeHtml(data.email || "meno.priezvisko@swisstransport.eu");
 
+    // Šírka = výška × reálny pomer strán obrázka. Kým sa pomer strán
+    // asynchrónne nenačíta (loadLogoAspectRatio), použije sa fallback
+    // 8.2 (aktuálny pomer horizontálneho loga, 1000×122 px), aby prvé
+    // vykreslenie nebolo nikdy skreslené ani prázdne.
+    const logoHeight = CONFIG.logoHeight;
+    const logoWidth = Math.round(logoHeight * (CONFIG.logoAspectRatio || 8.2));
+
     return `
 <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
   <tr>
-    <td style="padding-bottom:12px;">
-      <img src="${CONFIG.logoUrl}" width="${CONFIG.logoWidth}" alt="${escapeHtml(co.name)}" style="display:block;border:0;outline:none;text-decoration:none;">
+    <td style="padding-bottom:6px;">
+      <img src="${CONFIG.logoUrl}" width="${logoWidth}" height="${logoHeight}" alt="${escapeHtml(co.name)}" style="display:block;border:0;outline:none;text-decoration:none;width:${logoWidth}px;height:${logoHeight}px;">
     </td>
   </tr>
   <tr>
@@ -245,6 +257,23 @@
   }
 
   /* ---------------------------------------------------------
+     Zistenie reálneho pomeru strán loga – stiahne obrázok
+     mimo DOM a z jeho naturalWidth/naturalHeight dopočíta
+     CONFIG.logoAspectRatio, aby sa šírka v podpise nikdy
+     nenastavovala natvrdo (a teda ani neťahala/nestláčala).
+     --------------------------------------------------------- */
+  function loadLogoAspectRatio() {
+    const img = new Image();
+    img.onload = () => {
+      if (img.naturalWidth && img.naturalHeight) {
+        CONFIG.logoAspectRatio = img.naturalWidth / img.naturalHeight;
+        update();
+      }
+    };
+    img.src = CONFIG.logoUrl;
+  }
+
+  /* ---------------------------------------------------------
      Otvorenie podpisu v novej karte (mimo iframe náhľadu) –
      záložná metóda pre Apple Mail: medziaplikačný prenos
      naformátovaného HTML cez Clipboard API býva nespoľahlivý
@@ -305,4 +334,5 @@
 
   // Prvotné vykreslenie (ukážkové/placeholder údaje v náhľade)
   update();
+  loadLogoAspectRatio();
 })();
