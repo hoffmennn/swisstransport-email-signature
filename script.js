@@ -116,17 +116,17 @@
     <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;letter-spacing:.4px;text-transform:uppercase;color:${c.red};padding-bottom:9px;">${pozicia}</td>
   </tr>
   <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:${c.navy};">
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:${c.navy};">
       T:&nbsp;<a href="${telHref(data.telefon)}" style="color:${c.navy};text-decoration:none;">${telefon}</a>
     </td>
   </tr>
   <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:${c.navy};padding-bottom:9px;">
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:${c.navy};padding-bottom:9px;">
       E:&nbsp;<a href="mailto:${email}" style="color:${c.navy};text-decoration:none;">${email}</a>
     </td>
   </tr>
   <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;line-height:17px;color:${c.grayText};border-top:1px solid ${c.border};padding-top:9px;">
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:17px;color:${c.grayText};border-top:1px solid ${c.border};padding-top:9px;">
       <b style="color:${c.navy};">${escapeHtml(co.name)}</b><br>
       ${escapeHtml(co.addressLine1)} <br>${escapeHtml(co.addressLine2)}<br>
       <a href="${co.webUrl}" style="color:${c.red};text-decoration:none;">${escapeHtml(co.web)}</a>
