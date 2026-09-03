@@ -23,7 +23,7 @@
        používa lokálny súbor z priečinka assets/.
      --------------------------------------------------------- */
   const CONFIG = {
-    logoUrl: "assets/swisstransport-logo.png", // TODO: pred nasadením nahradiť plnou verejnou URL (napr. https://www.swisstransport.eu/podpis/logo.png)
+    logoUrl: "https://raw.githubusercontent.com/hoffmennn/swisstransport-email-signature/refs/heads/main/assets/swisstransport-logo.png",
     logoWidth: 108,
     colors: {
       navy: "#0f2438",
