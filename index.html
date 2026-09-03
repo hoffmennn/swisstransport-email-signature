@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generátor e-mailových podpisov · Swisstransport</title>
+  <link rel="icon" href="assets/swisstransport-logo.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <img src="assets/swisstransport-logo.png" alt="Swisstransport s.r.o.">
+    <div class="titles">
+      <h1>Email podpis</h1>
+      <p>Swisstransport s.r.o.</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- FORM -->
+    <section class="card" aria-labelledby="form-heading">
+
+
+      <form id="signature-form" novalidate>
+        <div class="field">
+          <label for="field-meno">Meno a priezvisko<span class="req">*</span></label>
+          <input type="text" id="field-meno" name="meno" placeholder="Menooo" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label for="field-pozicia">Pozícia<span class="req">*</span></label>
+          <input type="text" id="field-pozicia" name="pozicia" placeholder="Pozícia" autocomplete="organization-title" required>
+        </div>
+
+        <div class="field">
+          <label for="field-telefon">Telefónne číslo<span class="req">*</span></label>
+          <input type="tel" id="field-telefon" name="telefon" placeholder="+421 900 000 000" autocomplete="tel" required>
+        </div>
+
+        <div class="field">
+          <label for="field-email">E-mailová adresa<span class="req">*</span></label>
+          <input type="email" id="field-email" name="email" placeholder="mail@swisstransport.eu" autocomplete="email" required>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="copy-btn" disabled>Kopírovať podpis</button>
+          <button type="button" id="reset-btn">Vymazať</button>
+        </div>
+        <p class="status-msg" id="status-msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- signature -->
+    <section class="card" aria-labelledby="preview-heading">
+      <div class="preview-toolbar">
+        <div>
+          <h2 id="preview-heading">Náhľad</h2>
+        </div>
+      </div>
+
+      <div class="preview-frame-wrap">
+        <iframe id="preview-frame" title="Náhľad e-mailového podpisu"></iframe>
+      </div>
+
+
+    </section>
+  </main>
+
+  <footer>
+    Swisstransport s.r.o. · Na Letisko 2088/15, 058 01 Poprad · www.swisstransport.eu
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
