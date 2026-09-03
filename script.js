@@ -32,12 +32,12 @@
       border: "#dfe3e7"
     },
     company: {
-      name: "Swisstransport s.r.o.",
+      name: "SWISS TRANSPORT, s.r.o.",
       addressLine1: "Na Letisko 2088/15",
-      addressLine2: "058 01 Poprad",
+      addressLine2: "058 01 Poprad, Slovakia",
       web: "www.swisstransport.eu",
       webUrl: "https://www.swisstransport.eu",
-      email: "invoice@swisstransport.eu"
+      email: "info@swisstransport.eu"
     }
   };
 
@@ -54,6 +54,7 @@
   const previewFrame = document.getElementById("preview-frame");
   const copyBtn = document.getElementById("copy-btn");
   const resetBtn = document.getElementById("reset-btn");
+  const openTabBtn = document.getElementById("open-tab-btn");
   const statusMsg = document.getElementById("status-msg");
 
   /* ---------------------------------------------------------
@@ -91,44 +92,46 @@
     const co = CONFIG.company;
 
     const meno = escapeHtml(data.meno || "Meno Priezvisko");
-    const pozicia = escapeHtml(data.pozicia || "Pozícia");
+    // Veľké písmená posielame priamo v obsahu (nie cez CSS text-transform) –
+    // Apple Mail a viacero e-mailových klientov pri vkladaní/odosielaní
+    // podpisu CSS text-transform ignoruje alebo ho zdroj textu nezmení.
+    const pozicia = escapeHtml((data.pozicia || "Pozícia").toUpperCase());
     const telefon = escapeHtml(data.telefon || "+421 900 000 000");
     const email = escapeHtml(data.email || "meno.priezvisko@swisstransport.eu");
 
     return `
 <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
   <tr>
-    <td style="padding-right:18px;border-right:3px solid ${c.red};" valign="middle">
+    <td style="padding-bottom:12px;">
       <img src="${CONFIG.logoUrl}" width="${CONFIG.logoWidth}" alt="${escapeHtml(co.name)}" style="display:block;border:0;outline:none;text-decoration:none;">
     </td>
-    <td style="padding-left:18px;" valign="middle">
-      <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">
-        <tr>
-          <td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:${c.navy};padding-bottom:2px;">${meno}</td>
-        </tr>
-        <tr>
-          <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;font-weight:bold;letter-spacing:.4px;text-transform:uppercase;color:${c.red};padding-bottom:9px;">${pozicia}</td>
-        </tr>
-        <tr>
-          <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:${c.navy};">
-            T:&nbsp;<a href="${telHref(data.telefon)}" style="color:${c.navy};text-decoration:none;">${telefon}</a>
-          </td>
-        </tr>
-        <tr>
-          <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:${c.navy};padding-bottom:9px;">
-            E:&nbsp;<a href="mailto:${email}" style="color:${c.navy};text-decoration:none;">${email}</a>
-          </td>
-        </tr>
-        <tr>
-          <td style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;line-height:17px;color:${c.grayText};border-top:1px solid ${c.border};padding-top:9px;">
-            <b style="color:${c.navy};">${escapeHtml(co.name)}</b><br>
-            ${escapeHtml(co.addressLine1)}, ${escapeHtml(co.addressLine2)}<br>
-            <a href="${co.webUrl}" style="color:${c.red};text-decoration:none;">${escapeHtml(co.web)}</a>
-            &nbsp;·&nbsp;
-            <a href="mailto:${co.email}" style="color:${c.red};text-decoration:none;">${escapeHtml(co.email)}</a>
-          </td>
-        </tr>
-      </table>
+  </tr>
+  <tr>
+    <td style="border-top:3px solid ${c.red};font-size:0;line-height:0;padding-top:10px;">&nbsp;</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:${c.navy};padding-bottom:2px;">${meno}</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;letter-spacing:.4px;text-transform:uppercase;color:${c.red};padding-bottom:9px;">${pozicia}</td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:${c.navy};">
+      T:&nbsp;<a href="${telHref(data.telefon)}" style="color:${c.navy};text-decoration:none;">${telefon}</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:${c.navy};padding-bottom:9px;">
+      E:&nbsp;<a href="mailto:${email}" style="color:${c.navy};text-decoration:none;">${email}</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;line-height:17px;color:${c.grayText};border-top:1px solid ${c.border};padding-top:9px;">
+      <b style="color:${c.navy};">${escapeHtml(co.name)}</b><br>
+      ${escapeHtml(co.addressLine1)} <br>${escapeHtml(co.addressLine2)}<br>
+      <a href="${co.webUrl}" style="color:${c.red};text-decoration:none;">${escapeHtml(co.web)}</a>
+      &nbsp;·&nbsp;
+      <a href="mailto:${co.email}" style="color:${c.red};text-decoration:none;">${escapeHtml(co.email)}</a>
     </td>
   </tr>
 </table>`.trim();
@@ -241,6 +244,27 @@
     }
   }
 
+  /* ---------------------------------------------------------
+     Otvorenie podpisu v novej karte (mimo iframe náhľadu) –
+     záložná metóda pre Apple Mail: medziaplikačný prenos
+     naformátovaného HTML cez Clipboard API býva nespoľahlivý
+     (najmä z Chrome/Edge). Manuálne označenie (Cmd+A) a
+     skopírovanie (Cmd+C) priamo z vykresleného dokumentu
+     v Safari je najspoľahlivejšia cesta do Mail → Podpisy.
+     --------------------------------------------------------- */
+  function openSignatureInNewTab() {
+    const { data, requiredOk } = validate();
+    if (!requiredOk) {
+      showStatus("Najprv vyplňte všetky povinné polia.", "err");
+      return;
+    }
+    const html = buildSignatureHtml(data);
+    const doc = `<!doctype html><html><head><meta charset="utf-8"><title>Podpis</title></head><body style="margin:0;padding:16px;background:#ffffff;">${html}</body></html>`;
+    const blob = new Blob([doc], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+  }
+
   function showStatus(message, type) {
     statusMsg.textContent = message;
     statusMsg.className = "status-msg " + (type || "");
@@ -277,6 +301,7 @@
 
   copyBtn.addEventListener("click", copySignature);
   resetBtn.addEventListener("click", resetForm);
+  openTabBtn.addEventListener("click", openSignatureInNewTab);
 
   // Prvotné vykreslenie (ukážkové/placeholder údaje v náhľade)
   update();

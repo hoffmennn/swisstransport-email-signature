@@ -57,12 +57,24 @@
         <div>
           <h2 id="preview-heading">Náhľad</h2>
         </div>
+        <button type="button" id="open-tab-btn" class="link-btn">Otvoriť podpis v novej karte ↗</button>
       </div>
 
       <div class="preview-frame-wrap">
         <iframe id="preview-frame" title="Náhľad e-mailového podpisu"></iframe>
       </div>
 
+      <details class="howto">
+        <summary>Ako vložiť podpis do Apple Mail (macOS)</summary>
+        <ol>
+          <li>Podpis kopírujte/otvárajte v <b>Safari</b> – medzi appkami sa naformátovaný HTML text najspoľahlivejšie prenáša práve cez Safari, z Chrome/Edge sa občas prenesie len holý text.</li>
+          <li>Kliknite na <b>Kopírovať podpis</b>. Ak by sa formátovanie predsa len nepreniesla, použite <b>Otvoriť podpis v novej karte</b>, v novej karte označte celý obsah (Cmd+A) a skopírujte (Cmd+C).</li>
+          <li>V Mail.app choďte do <b>Mail → Nastavenia (Settings) → Podpisy (Signatures)</b>, vyberte svoj e-mailový účet a kliknite na <b>+</b> pre nový podpis.</li>
+          <li>Kliknite do textového poľa podpisu a vložte (Cmd+V).</li>
+          <li><b>Dôležité:</b> odškrtnite políčko <b>„Always match my default message font"</b> – ak ostane zaškrtnuté, Apple Mail prepíše farby aj písmo podpisu svojím predvoleným štýlom.</li>
+          <li>Napokon podpis priraďte k správnemu e-mailovému účtu/aliasu v zozname vľavo.</li>
+        </ol>
+      </details>
 
     </section>
   </main>
