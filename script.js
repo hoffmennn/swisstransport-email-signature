@@ -23,7 +23,7 @@
        používa lokálny súbor z priečinka assets/.
      --------------------------------------------------------- */
   const CONFIG = {
-    logoUrl: "https://raw.githubusercontent.com/hoffmennn/swisstransport-email-signature/refs/heads/main/assets/swisstransport-logo.png",
+    logoUrl: "https://raw.githubusercontent.com/hoffmennn/swisstransport-email-signature/refs/heads/main/assets/logo-horizontal.png",
     logoWidth: 108,
     colors: {
       navy: "#0f2438",
