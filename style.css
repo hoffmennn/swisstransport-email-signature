@@ -124,6 +124,36 @@ main {
   margin-left: 2px;
 }
 
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.field-label-row label {
+  margin-bottom: 0;
+}
+
+.toggle-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toggle-check input {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--red);
+}
+
 .field input,
 .field select {
   width: 100%;
@@ -135,6 +165,13 @@ main {
   border: 1.5px solid var(--border);
   border-radius: 9px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:disabled {
+  background: #eef0f3;
+  color: var(--text-muted);
+  cursor: not-allowed;
+  border-color: var(--border);
 }
 
 .field input:focus,

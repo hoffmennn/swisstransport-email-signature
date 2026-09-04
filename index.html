@@ -29,13 +29,23 @@
         </div>
 
         <div class="field">
-          <label for="field-pozicia">Pozícia<span class="req">*</span></label>
-          <input type="text" id="field-pozicia" name="pozicia" placeholder="Pozícia" autocomplete="organization-title" required>
+          <div class="field-label-row">
+            <label for="field-pozicia">Pozícia<span class="req" id="field-pozicia-req">*</span></label>
+            <label class="toggle-check">
+              <input type="checkbox" id="field-pozicia-include" checked>
+            </label>
+          </div>
+          <input type="text" id="field-pozicia" name="pozicia" placeholder="Pozícia" autocomplete="organization-title">
         </div>
 
         <div class="field">
-          <label for="field-telefon">Telefónne číslo<span class="req">*</span></label>
-          <input type="tel" id="field-telefon" name="telefon" placeholder="+421 900 000 000" autocomplete="tel" required>
+          <div class="field-label-row">
+            <label for="field-telefon">Telefónne číslo<span class="req" id="field-telefon-req">*</span></label>
+            <label class="toggle-check">
+              <input type="checkbox" id="field-telefon-include" checked>
+            </label>
+          </div>
+          <input type="tel" id="field-telefon" name="telefon" placeholder="+421 900 000 000" autocomplete="tel">
         </div>
 
         <div class="field">

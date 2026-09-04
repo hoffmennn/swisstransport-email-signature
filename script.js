@@ -1,35 +1,14 @@
-/* =========================================================
-   Swisstransport – Generátor e-mailových podpisov
-   ---------------------------------------------------------
-   Vygenerovaný podpis používa TABUĽKOVÝ layout a INLINE
-   štýly (nie externé CSS triedy) – je to zámerné, pretože
-   väčšina e-mailových klientov (Outlook, Gmail, ...) pri
-   vložení podpisu ignoruje alebo orezáva <style> bloky a
-   moderné CSS (flex/grid). Tabuľky + inline štýly sú jediný
-   spôsob, ako zaručiť rovnaký vzhľad podpisu naprieč
-   klientmi.
-   ========================================================= */
+
 
 (() => {
   "use strict";
 
-  /* ---------------------------------------------------------
-     KONFIGURÁCIA
-     - logoUrl: URL loga, ktoré sa vloží do e-mailu.
-       DÔLEŽITÉ: musí ísť o verejne dostupnú (hostovanú) URL
-       adresu obrázka (napr. na firemnom webe/CDN), nie
-       o lokálnu cestu – inak sa logo príjemcom nezobrazí.
-       Pre potreby živého náhľadu v tomto nástroji sa zatiaľ
-       používa lokálny súbor z priečinka assets/.
-     --------------------------------------------------------- */
+
   const CONFIG = {
     logoUrl: "https://raw.githubusercontent.com/hoffmennn/swisstransport-email-signature/refs/heads/main/assets/logo-horizontal.png",
-    // Nastavuje sa len výška loga. Šírka sa dopočítava automaticky
-    // podľa skutočného pomeru strán stiahnutého obrázka (viď
-    // loadLogoAspectRatio nižšie) – logo tak nie je nikdy umelo
-    // naťahované/stlačené, nech je zdrojový súbor akokoľvek veľký.
+
     logoHeight: 40,
-    logoAspectRatio: null, // width / height; doplní sa asynchrónne
+    logoAspectRatio: null,
     colors: {
       navy: "#0f2438",
       red: "#e2231a",
@@ -55,6 +34,16 @@
     pozicia: document.getElementById("field-pozicia"),
     telefon: document.getElementById("field-telefon"),
     email: document.getElementById("field-email")
+  };
+  // Checkboxy na (voliteľné) zahrnutie/odstránenie polí Pozícia a
+  // Telefónne číslo z podpisu – defaultne sú obe polia zahrnuté.
+  const includeToggles = {
+    pozicia: document.getElementById("field-pozicia-include"),
+    telefon: document.getElementById("field-telefon-include")
+  };
+  const reqMarks = {
+    pozicia: document.getElementById("field-pozicia-req"),
+    telefon: document.getElementById("field-telefon-req")
   };
   const previewFrame = document.getElementById("preview-frame");
   const copyBtn = document.getElementById("copy-btn");
@@ -85,31 +74,63 @@
       meno: fields.meno.value.trim(),
       pozicia: fields.pozicia.value.trim(),
       telefon: fields.telefon.value.trim(),
-      email: fields.email.value.trim()
+      email: fields.email.value.trim(),
+      includePozicia: includeToggles.pozicia.checked,
+      includeTelefon: includeToggles.telefon.checked
     };
   }
 
+  function applyIncludeToggles() {
+    const pozInc = includeToggles.pozicia.checked;
+    const telInc = includeToggles.telefon.checked;
+
+    fields.pozicia.disabled = !pozInc;
+    fields.telefon.disabled = !telInc;
+    reqMarks.pozicia.style.display = pozInc ? "" : "none";
+    reqMarks.telefon.style.display = telInc ? "" : "none";
+
+    if (!pozInc) fields.pozicia.classList.remove("invalid");
+    if (!telInc) fields.telefon.classList.remove("invalid");
+  }
+
   /* ---------------------------------------------------------
-     Generovanie HTML podpisu (tabuľkový layout, inline štýly)
+     Generating HTML signature
      --------------------------------------------------------- */
   function buildSignatureHtml(data) {
     const c = CONFIG.colors;
     const co = CONFIG.company;
 
     const meno = escapeHtml(data.meno || "Meno Priezvisko");
-    // Veľké písmená posielame priamo v obsahu (nie cez CSS text-transform) –
-    // Apple Mail a viacero e-mailových klientov pri vkladaní/odosielaní
-    // podpisu CSS text-transform ignoruje alebo ho zdroj textu nezmení.
+
     const pozicia = escapeHtml((data.pozicia || "Pozícia").toUpperCase());
     const telefon = escapeHtml(data.telefon || "+421 900 000 000");
     const email = escapeHtml(data.email || "meno.priezvisko@swisstransport.eu");
 
-    // Šírka = výška × reálny pomer strán obrázka. Kým sa pomer strán
-    // asynchrónne nenačíta (loadLogoAspectRatio), použije sa fallback
-    // 8.2 (aktuálny pomer horizontálneho loga, 1000×122 px), aby prvé
-    // vykreslenie nebolo nikdy skreslené ani prázdne.
+    const showPozicia = data.includePozicia !== false;
+    const showTelefon = data.includeTelefon !== false;
+
+
     const logoHeight = CONFIG.logoHeight;
     const logoWidth = Math.round(logoHeight * (CONFIG.logoAspectRatio || 8.2));
+
+    // Ak je pozícia vynechaná, meno prevezme jej spodný odstup (9px),
+    // aby medzera pred ďalším riadkom (telefón/e-mail) ostala rovnaká.
+    const menoRow = `
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:${c.navy};padding-bottom:${showPozicia ? "2px" : "9px"};">${meno}</td>
+  </tr>`;
+
+    const poziciaRow = showPozicia ? `
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;letter-spacing:.4px;text-transform:uppercase;color:${c.red};padding-bottom:9px;">${pozicia}</td>
+  </tr>` : "";
+
+    const telefonRow = showTelefon ? `
+  <tr>
+    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:${c.navy};">
+      T:&nbsp;<a href="${telHref(data.telefon)}" style="color:${c.navy};text-decoration:none;">${telefon}</a>
+    </td>
+  </tr>` : "";
 
     return `
 <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
@@ -120,18 +141,7 @@
   </tr>
   <tr>
     <td style="border-top:3px solid ${c.red};font-size:0;line-height:0;padding-top:10px;">&nbsp;</td>
-  </tr>
-  <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:${c.navy};padding-bottom:2px;">${meno}</td>
-  </tr>
-  <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;letter-spacing:.4px;text-transform:uppercase;color:${c.red};padding-bottom:9px;">${pozicia}</td>
-  </tr>
-  <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:${c.navy};">
-      T:&nbsp;<a href="${telHref(data.telefon)}" style="color:${c.navy};text-decoration:none;">${telefon}</a>
-    </td>
-  </tr>
+  </tr>${menoRow}${poziciaRow}${telefonRow}
   <tr>
     <td style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:${c.navy};padding-bottom:9px;">
       E:&nbsp;<a href="mailto:${email}" style="color:${c.navy};text-decoration:none;">${email}</a>
@@ -149,19 +159,19 @@
 </table>`.trim();
   }
 
-  // Textová (plain-text) verzia podpisu – používa sa ako fallback
-  // pri kopírovaní (napr. do textových polí bez podpory HTML).
   function buildSignaturePlainText(data) {
     const co = CONFIG.company;
     const meno = data.meno || "Meno Priezvisko";
     const pozicia = data.pozicia || "Pozícia";
     const telefon = data.telefon || "+421 900 000 000";
     const email = data.email || "meno.priezvisko@swisstransport.eu";
+    const showPozicia = data.includePozicia !== false;
+    const showTelefon = data.includeTelefon !== false;
 
     return [
       meno,
-      pozicia,
-      `T: ${telefon}`,
+      ...(showPozicia ? [pozicia] : []),
+      ...(showTelefon ? [`T: ${telefon}`] : []),
       `E: ${email}`,
       "",
       co.name,
@@ -195,15 +205,25 @@
      aktívne až po vyplnení mena, pozície, telefónu a e-mailu.
      --------------------------------------------------------- */
   function validate() {
+    applyIncludeToggles();
     const data = getValues();
+    // Pozícia a telefón sú vyžadované len keď je ich checkbox "Zahrnúť
+    // do podpisu" zapnutý – vypnuté pole je úplne voliteľné.
     const requiredOk =
       data.meno.length > 0 &&
-      data.pozicia.length > 0 &&
-      data.telefon.length > 0 &&
+      (!data.includePozicia || data.pozicia.length > 0) &&
+      (!data.includeTelefon || data.telefon.length > 0) &&
       /\S+@\S+\.\S+/.test(data.email);
 
-    [fields.meno, fields.pozicia, fields.telefon].forEach((el) => {
-      el.classList.toggle("invalid", el.value.trim().length === 0 && el.dataset.touched === "1");
+    [
+      [fields.meno, true],
+      [fields.pozicia, data.includePozicia],
+      [fields.telefon, data.includeTelefon]
+    ].forEach(([el, active]) => {
+      el.classList.toggle(
+        "invalid",
+        active && el.value.trim().length === 0 && el.dataset.touched === "1"
+      );
     });
     fields.email.classList.toggle(
       "invalid",
@@ -326,6 +346,10 @@
       el.dataset.touched = "1";
       validate();
     });
+  });
+
+  Object.values(includeToggles).forEach((el) => {
+    el.addEventListener("change", update);
   });
 
   copyBtn.addEventListener("click", copySignature);
